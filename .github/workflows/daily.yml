@@ -8,12 +8,29 @@ on:
 jobs:
   search:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -r requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check project structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo ""
+          echo "Repository files:"
+          find . -maxdepth 3 -type f | sort
+
       - name: Run BIM lead automation
         env:
           SEARCH_API_KEY: ${{ secrets.SEARCH_API_KEY }}
@@ -22,8 +39,12 @@ jobs:
           AI_MODEL: ${{ secrets.AI_MODEL }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-        run: python -m src.main
-      - uses: actions/upload-artifact@v4
+        run: |
+          PYTHONPATH=. python -m src.main
+
+      - name: Upload CSV backup
+        uses: actions/upload-artifact@v4
         with:
           name: bim-leads-csv
           path: data/leads.csv
+          if-no-files-found: warn
