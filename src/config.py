@@ -1,47 +1,123 @@
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
+# =========================
+# SEARCH API
+# =========================
+
 SEARCH_API_KEY = os.getenv("SEARCH_API_KEY", "")
-SEARCH_API_URL = os.getenv("SEARCH_API_URL", "https://serpapi.com/search.json")
+SEARCH_API_URL = os.getenv(
+    "SEARCH_API_URL",
+    "https://serpapi.com/search.json"
+)
+
+# =========================
+# AI
+# =========================
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-AI_MODEL = os.getenv("AI_MODEL", "gpt-5.6-mini")
+AI_MODEL = os.getenv("AI_MODEL", "")
 
-SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-REPORT_FROM_EMAIL = os.getenv("REPORT_FROM_EMAIL", SMTP_USERNAME)
-REPORT_TO_EMAIL = os.getenv("REPORT_TO_EMAIL", "")
+# =========================
+# SEARCH LIMITS
+# =========================
 
-MAX_RESULTS_PER_QUERY = int(os.getenv("MAX_RESULTS_PER_QUERY", "10"))
-MAX_COMPANIES = int(os.getenv("MAX_COMPANIES", "100"))
-REQUEST_TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", "20"))
+# Search more than 20 candidates so we can filter
+# and finally select the best 20 qualified companies.
+MAX_RESULTS_PER_QUERY = int(
+    os.getenv("MAX_RESULTS_PER_QUERY", "10")
+)
 
-SEARCH_QUERIES = [
-    '"CAD to BIM" outsourcing company',
-    '"CAD to BIM" services',
-    '"Scan to BIM" services company',
+MAX_COMPANIES = int(
+    os.getenv("MAX_COMPANIES", "60")
+)
+
+REQUEST_TIMEOUT = int(
+    os.getenv("REQUEST_TIMEOUT", "10")
+)
+
+# =========================
+# SEARCH PRIORITY
+# =========================
+
+# FIRST PRIORITY — SCAN TO BIM
+SCAN_TO_BIM_QUERIES = [
+    '"Scan to BIM" company',
+    '"Scan to BIM" services',
     '"Scan to BIM" outsourcing',
-    '"Revit modeling" outsourcing company',
-    '"BIM outsourcing" services',
-    '"BIM coordination" outsourcing',
-    '"point cloud to BIM" company',
-    '"architectural BIM" outsourcing',
-    '"MEP BIM" outsourcing',
-    '"as-built BIM" services',
-    '"Revit conversion" services company',
-    '"BIM modeling" outsourcing',
+    '"Point Cloud to BIM" company',
+    '"Point Cloud to BIM" services',
+    '"Laser Scan to BIM" company',
+    '"Scan-to-Revit" services',
 ]
+
+# SECOND PRIORITY — CAD TO BIM
+CAD_TO_BIM_QUERIES = [
+    '"CAD to BIM" company',
+    '"CAD to BIM" services',
+    '"CAD to BIM" outsourcing',
+    '"2D CAD to Revit" services',
+    '"DWG to Revit" services',
+    '"AutoCAD to BIM" company',
+]
+
+# Scan-to-BIM is intentionally BEFORE CAD-to-BIM
+SEARCH_QUERIES = (
+    SCAN_TO_BIM_QUERIES +
+    CAD_TO_BIM_QUERIES
+)
+
+# =========================
+# WORLDWIDE REGIONS
+# =========================
 
 REGIONS = [
-    "United States", "United Kingdom", "Canada", "Australia",
-    "United Arab Emirates", "Saudi Arabia", "Qatar", "Singapore",
-    "New Zealand", "Germany", "Netherlands", "Ireland"
+    "United States",
+    "United Kingdom",
+    "Canada",
+    "Australia",
+    "United Arab Emirates",
+    "Saudi Arabia",
+    "Qatar",
+    "Singapore",
+    "New Zealand",
+    "Germany",
+    "Netherlands",
+    "Ireland",
+    "India",
+    "Europe",
+    "Middle East",
 ]
 
+# =========================
+# SERVICE KEYWORDS
+# =========================
+
 SERVICE_KEYWORDS = [
-    "cad to bim", "scan to bim", "point cloud to bim", "revit",
-    "bim outsourcing", "bim modeling", "bim coordination",
-    "architectural bim", "mep bim", "as-built", "3d modeling"
+    # Scan to BIM
+    "scan to bim",
+    "scan-to-bim",
+    "point cloud to bim",
+    "laser scan to bim",
+    "scan to revit",
+    "point cloud",
+    "reality capture",
+
+    # CAD to BIM
+    "cad to bim",
+    "2d cad to revit",
+    "dwg to revit",
+    "autocad to bim",
+    "cad conversion",
+
+    # General BIM
+    "bim outsourcing",
+    "bim modeling",
+    "revit modeling",
+    "bim coordination",
+    "architectural bim",
+    "mep bim",
+    "as-built bim",
 ]
